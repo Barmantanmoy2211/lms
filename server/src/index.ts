@@ -5,6 +5,7 @@ import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import * as dynamooose from 'dynamoose';
+import courseRoute  from './routes/courseRoute';
 
 /* ROUTES IMPORTS */
 
@@ -30,6 +31,8 @@ app.use(cors());
 app.get('/', (req, res) => {
     res.send('Hello World!');
 });
+
+app.use("/courses", courseRoute);
 
 // Server
 const port = process.env.PORT || 3000;
