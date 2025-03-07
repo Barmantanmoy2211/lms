@@ -6,6 +6,8 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import * as dynamooose from 'dynamoose';
 import courseRoute  from './routes/courseRoute';
+import { createClerkClient } from '@clerk/express';
+import userClerkRoutes from './routes/userClerkRoutes';
 
 /* ROUTES IMPORTS */
 
@@ -17,6 +19,10 @@ const isProduction = process.env.NODE_ENV === 'production';
 if (!isProduction) {
     dynamooose.aws.ddb.local();
 }
+
+export const clerkClient = createClerkClient({
+    secretKey: process.env.CLERK_API_KEY,
+})
 
 const app = express();
 app.use(express.json());
@@ -33,6 +39,7 @@ app.get('/', (req, res) => {
 });
 
 app.use("/courses", courseRoute);
+app.use("/users/clerk", userClerkRoutes);
 
 // Server
 const port = process.env.PORT || 3000;
