@@ -8,6 +8,7 @@ import * as dynamooose from 'dynamoose';
 import courseRoute  from './routes/courseRoute';
 import { clerkMiddleware, createClerkClient, requireAuth } from '@clerk/express';
 import userClerkRoutes from './routes/userClerkRoutes';
+import transactionRoutes from './routes/transactionRoutes';
 
 /* ROUTES IMPORTS */
 
@@ -41,6 +42,7 @@ app.get('/', (req, res) => {
 
 app.use("/courses", courseRoute);
 app.use("/users/clerk", requireAuth(),  userClerkRoutes);
+app.use("/transactions", requireAuth(),  transactionRoutes);
 
 // Server
 const port = process.env.PORT || 3000;
