@@ -6,7 +6,7 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import * as dynamooose from 'dynamoose';
 import courseRoute  from './routes/courseRoute';
-import { createClerkClient } from '@clerk/express';
+import { clerkMiddleware, createClerkClient, requireAuth } from '@clerk/express';
 import userClerkRoutes from './routes/userClerkRoutes';
 
 /* ROUTES IMPORTS */
@@ -21,7 +21,7 @@ if (!isProduction) {
 }
 
 export const clerkClient = createClerkClient({
-    secretKey: process.env.CLERK_API_KEY,
+    secretKey: process.env.CLERK_SECRET_KEY,
 })
 
 const app = express();
@@ -32,6 +32,7 @@ app.use(morgan('common'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
+app.use(clerkMiddleware());
 
 // ROUTES
 app.get('/', (req, res) => {
@@ -39,7 +40,7 @@ app.get('/', (req, res) => {
 });
 
 app.use("/courses", courseRoute);
-app.use("/users/clerk", userClerkRoutes);
+app.use("/users/clerk", requireAuth(),  userClerkRoutes);
 
 // Server
 const port = process.env.PORT || 3000;
